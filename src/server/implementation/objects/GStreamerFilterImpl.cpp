@@ -199,6 +199,21 @@ void GStreamerFilterImpl::setElementProperty(const std::string &propertyName,
     }
     g_value_set_int (&value, converted);
   }
+  else if (G_IS_PARAM_SPEC_UINT64 (pspec)) {
+    guint64 converted = 0;
+    try {
+      converted = g_ascii_strtoull (propertyValue);
+    }
+    catch (std::exception &ex) {
+      std::ostringstream oss;
+      oss << "Cannot convert '" << propertyValue << "' to uint64: " << ex.what();
+      std::string message = oss.str();
+
+      GST_WARNING ("%s", message.c_str());
+      throw KurentoException (MARSHALL_ERROR, message);
+    }
+    g_value_set_uint64 (&value, converted);
+  }
   else if (G_IS_PARAM_SPEC_FLOAT (pspec)) {
     gfloat converted = 0.0f;
     try {
